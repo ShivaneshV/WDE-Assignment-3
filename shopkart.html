@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Shop Portal (Combined & Working)</title>
+    
+    <style>
+        /* Amazon Color Palette */
+        :root {
+            --color-primary: #131921; /* Dark Header/Footer */
+            --color-secondary: #232f3e; /* Mid-Dark Nav Bar */
+            --color-link: #007185; /* Link Blue */
+            --color-cta: #ff9900; /* Call-to-Action Orange/Yellow */
+            --color-background: #eaeded; /* Light background */
+            --color-text: #111;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            font-size: 14px;
+            scroll-behavior: smooth; 
+        }
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        /* Navigation Menu (Two-Tier) */
+        header { background: var(--color-primary); color: #fff; }
+        .top-nav { padding: 10px 0; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .logo { font-size: 24px; font-weight: bold; color: #fff; text-decoration: none; padding: 0 10px; }
+        .top-nav ul { list-style: none; padding: 0; margin: 0; display: flex; align-items: center; }
+        .top-nav li { padding: 0 10px; cursor: pointer; }
+        .top-nav a { color: #fff; text-decoration: none; white-space: nowrap; }
+        .bottom-nav { background: var(--color-secondary); padding: 5px 20px; }
+        .bottom-nav ul { list-style: none; padding: 0; margin: 0; display: flex; }
+        .bottom-nav li { padding-right: 15px; }
+        .bottom-nav a { color: #fff; text-decoration: none; font-weight: bold; }
+
+        /* Search Bar */
+        .search-bar { flex-grow: 1; display: flex; height: 40px; }
+        .search-bar input { flex-grow: 1; padding: 10px; border: none; border-radius: 4px 0 0 4px; }
+        .search-bar button { background: var(--color-cta); border: none; padding: 0 15px; border-radius: 0 4px 4px 0; cursor: pointer; }
+
+        /* Main Content & Sections */
+        main { padding-top: 20px; }
+        section { background: #fff; margin-bottom: 20px; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); border: 1px solid #ddd; }
+        h2 { color: var(--color-text); font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-top: 0; }
+        
+        /* Product Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 15px; }
+        .product-card { background: #fff; border: 1px solid #ddd; padding: 10px; border-radius: 4px; text-align: center; transition: box-shadow 0.2s; }
+        .product-card:hover { box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); }
+        .product-image { height: 150px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+        .product-image img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .product-title { font-weight: normal; font-size: 15px; color: var(--color-link); height: 3em; overflow: hidden; margin: 5px 0; text-align: left; }
+        .product-price { font-size: 20px; font-weight: bold; color: #b12704; margin: 10px 0; text-align: left; }
+        .product-card button { background: var(--color-cta); color: var(--color-text); font-weight: bold; padding: 8px 15px; border: 1px solid #f08804; cursor: pointer; border-radius: 3px; width: 90%; margin-top: 5px; }
+        
+        /* Dashboard/User Info Grid */
+        #user-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 0; background: none; border: none; box-shadow: none; }
+        .info-box { background: #fff; padding: 15px; border-radius: 4px; border: 1px solid #ccc; }
+        .info-box h3 { margin-top: 0; color: var(--color-text); font-size: 16px; }
+        
+        /* Forms */
+        #login-register { display: flex; justify-content: center; gap: 40px; }
+        .auth-form { padding: 20px 30px; border: 1px solid #ddd; flex-basis: 40%; max-width: 400px; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.05); }
+        .auth-form input { display: block; width: 90%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 3px; }
+        .auth-form button { background: var(--color-cta); color: var(--color-text); font-weight: bold; padding: 10px 15px; border: 1px solid #f08804; cursor: pointer; border-radius: 3px; width: 100%; transition: background 0.2s; }
+        .auth-form button:hover { background: #e48600; }
+        
+        /* Footer */
+        footer { text-align: center; padding: 20px; background: var(--color-primary); color: #fff; margin-top: 30px; }
+        
+        /* Contact Form Specific Styles for internal form */
+        #contact-form-container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 4px;}
+        #contact-form-container label { display: block; font-weight: bold; margin-bottom: 5px; }
+        #contact-form-container input[type="text"], 
+        #contact-form-container input[type="email"], 
+        #contact-form-container textarea { width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; }
+        #contact-form-container button { width: 100%; background: var(--color-link); color: white; padding: 10px; border: none; border-radius: 3px; font-weight: bold; cursor: pointer; }
+        #contact-form-container button:hover { background: #005a69; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="top-nav container">
+            <a href="#home" class="logo">E-Shop</a>
+            <div class="search-bar">
+                <input type="text" placeholder="Search E-Shop">
+                <button>[🔍]</button>
+            </div>
+            <ul>
+                <li><a href="#login-register">Hello, Sign In</a></li>
+                <li><a href="#orders-list">Returns & Orders</a></li>
+                <li><a href="#" id="cartLink">[🛒] Cart</a></li>
+            </ul>
+        </div>
+        
+        <div class="bottom-nav">
+            <div class="container">
+                <ul>
+                    <li><a href="#products">Product Items</a></li>
+                    <li><a href="#contact">Contact Us</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#products">Electronics</a></li>
+                    <li><a href="#products">Home & Kitchen</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <section id="home">
+            <h2>Welcome Back! Shop Our Trending Categories</h2>
+            <p style="text-align: center; background: #f2f2f2; padding: 50px;"></p>
+        </section>
+
+        <section id="products">
+            <h2>Featured Product Items</h2>
+            <div class="product-grid">
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="http://googleusercontent.com/image_collection/image_retrieval/13555502141310416447_0" alt="Premium Wireless Headphones">
+                    </div>
+                    <div class="product-title">Premium Noise-Cancelling Wireless Headphones, Black Edition</div>
+                    <p style="color: #555; font-size: 12px; text-align: left;">⭐⭐⭐⭐ (4,500 ratings)</p>
+                    <div class="product-price">$199.99</div>
+                    <button>Add to Cart</button>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="http://googleusercontent.com/image_collection/image_retrieval/12883909192989157561_0" alt="Stainless Steel Smart Watch">
+                    </div>
+                    <div class="product-title">Stainless Steel Smart Watch with Health Tracking, Water Resistant</div>
+                    <p style="color: #555; font-size: 12px; text-align: left;">⭐⭐⭐⭐⭐ (980 ratings)</p>
+                    <div class="product-price">$89.50</div>
+                    <button>Add to Cart</button>
+                </div>
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="http://googleusercontent.com/image_collection/image_retrieval/862634660306599642_0" alt="Ergonomic Office Chair">
+                    </div>
+                    <div class="product-title">Ergonomic Office Chair with Lumbar Support and Adjustable Height</div>
+                    <p style="color: #555; font-size: 12px; text-align: left;">⭐⭐⭐ (2,100 ratings)</p>
+                    <div class="product-price">$149.00</div>
+                    <button>Add to Cart</button>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="http://googleusercontent.com/image_collection/image_retrieval/14262816774242036186_0" alt="Portable Solid State Drive">
+                    </div>
+                    <div class="product-title">High-Speed USB-C Portable Solid State Drive (1TB), Compact Design</div>
+                    <p style="color: #555; font-size: 12px; text-align: left;">⭐⭐⭐⭐⭐ (7,200 ratings)</p>
+                    <div class="product-price">$75.99</div>
+                    <button>Add to Cart</button>
+                </div>
+
+            </div>
+        </section>
+        
+        <div id="user-dashboard">
+            <div id="orders-list" class="info-box">
+                <h3>🛒 Orders List</h3>
+                <p>Track packages, view past orders, or initiate a return.</p>
+                <ul>
+                    <li><a href="#" style="color: var(--color-link);">Order #1001 (Delivered on Nov 10)</a></li>
+                    <li><a href="#" style="color: var(--color-link);">Order #1002 (In Transit, est. Nov 16)</a></li>
+                    <li><a href="#" style="color: var(--color-link);">Order #1003 (Cancelled)</a></li>
+                </ul>
+            </div>
+            <div id="wishlist" class="info-box">
+                <h3>💖 Wishlist</h3>
+                <p>Items saved for later purchase (12 items total).</p>
+                <p>Top Items:</p>
+                <ul>
+                    <li>1x 4K Monitor</li>
+                    <li>1x Gaming Mouse</li>
+                </ul>
+                <button style="background: var(--color-link); color: white; padding: 5px 10px; border: none; border-radius: 3px;">View Wishlist</button>
+            </div>
+            <div id="reviews-comments" class="info-box">
+                <h3>⭐ Comments & Reviews</h3>
+                <p>Your contribution helps other shoppers. Pending reviews: 2</p>
+                <ul>
+                    <li>**Product A:** 5-star rating submitted.</li>
+                    <li>**Product B:** Review draft saved.</li>
+                </ul>
+            </div>
+            <div id="customer-care" class="info-box">
+                <h3>📞 Customer Care & Reporting</h3>
+                <p>Get immediate help with orders, technical issues, or account security.</p>
+                <a href="#" style="color: var(--color-link);">Start Live Chat</a> | <a href="#" style="color: var(--color-link);">Report Issue (24/7)</a>
+            </div>
+        </div>
+
+        <section id="login-register">
+            <h2>Sign In or Create Account</h2>
+            
+            <form id="loginForm" class="auth-form">
+                <h3>Existing User Login</h3>
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+
+            <form id="registrationForm" class="auth-form">
+                <h3>New User Registration</h3>
+                <input type="text" id="reg-name" placeholder="Your Name" required>
+                <input type="email" id="reg-email" placeholder="Email" required>
+                <input type="password" id="reg-password" placeholder="Password (Min 8 chars)" 
+                       pattern=".{8,}" title="Must be 8 or more characters" required>
+                <button type="submit">Continue</button>
+            </form>
+
+        </section>
+
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <p>We are here to help! Please use the form below for general inquiries, feedback, or media requests. For urgent issues (missing packages, account lockout), please use the **Customer Care** links in the dashboard section above.</p>
+            
+            <div id="contact-form-container">
+                <form id="generalContactForm">
+                    <label for="contact-name">Your Full Name:</label>
+                    <input type="text" id="contact-name" required>
+                    
+                    <label for="contact-email">Email Address:</label>
+                    <input type="email" id="contact-email" required>
+                    
+                    <label for="contact-subject">Subject:</label>
+                    <input type="text" id="contact-subject" required>
+                    
+                    <label for="contact-message">Your Message:</label>
+                    <textarea id="contact-message" rows="6" required></textarea>
+                    
+                    <button type="submit">Send Inquiry</button>
+                </form>
+            </div>
+        </section>
+        
+        <section id="about">
+            <h2>About E-Shop Portal</h2>
+            <p><strong>Our Mission:</strong> E-Shop Portal strives to be the world's most customer-centric company, where people can find and discover anything they might want to buy online, built on a foundation of reliability and trust.</p>
+            
+            <h3>Our Values</h3>
+            <ul>
+                <li>**Customer Obsession:** Starting with the customer and working backward is central to our philosophy.</li>
+                <li>**Commitment to Quality:** We rigorously vet all products and partners to ensure a high-quality shopping experience.</li>
+                <li>**Innovation:** We constantly pursue new technologies to make your browsing and buying faster and easier.</li>
+            </ul>
+
+            <h3>Quick Facts</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">Metric</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Detail</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Founded</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">2024 (Simulated)</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Service Area</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">Global Shipping Available</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+    
+    <footer>
+        <p>E-Shop Portal - Combined Template. &copy; 2025</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const regForm = document.getElementById('registrationForm');
+            const loginForm = document.getElementById('loginForm');
+            const cartLink = document.getElementById('cartLink');
+            const contactForm = document.getElementById('generalContactForm');
+            
+            // --- Registration Form Validation & Submission Logic ---
+            if (regForm) {
+                regForm.addEventListener('submit', function(event) {
+                    event.preventDefault(); 
+                    
+                    const name = document.getElementById('reg-name').value;
+                    const email = document.getElementById('reg-email').value;
+                    const password = document.getElementById('reg-password').value;
+
+                    let isValid = true;
+                    let message = "Registration failed:\n";
+
+                    if (name.trim() === "") { message += "- Name cannot be empty.\n"; isValid = false; }
+                    if (password.length < 8) { message += "- Password must be at least 8 characters long.\n"; isValid = false; }
+                    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                    if (!emailPattern.test(email)) { message += "- Please enter a valid email address.\n"; isValid = false; }
+
+                    if (isValid) {
+                        alert("✅ Registration Successful! Your account is created.");
+                        regForm.reset(); 
+                    } else {
+                        alert(message);
+                    }
+                });
+            }
+
+            // --- Login Form Simulation ---
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    alert("🔓 Login Successful! Welcome back.");
+                    loginForm.reset();
+                });
+            }
+
+            // --- Product Card Button Simulation (Simulates adding to cart) ---
+            document.querySelectorAll('.product-card button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productTitle = this.closest('.product-card').querySelector('.product-title').textContent;
+                    alert(`🛒 Added "${productTitle}" to your cart!`);
+                });
+            });
+
+            // --- CART LINK FIX: Functional alert when cart icon is clicked ---
+            if (cartLink) {
+                cartLink.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    alert("🛍️ Viewing Shopping Cart: 4 items currently in your cart. Proceed to checkout!");
+                });
+            }
+            
+            // --- General Contact Form Submission Simulation ---
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    alert("📧 Thank you! Your inquiry has been received. We will respond to your email shortly.");
+                    contactForm.reset();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
